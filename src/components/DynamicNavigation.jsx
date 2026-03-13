@@ -48,6 +48,7 @@ const iconMap = {
   'rolpantallas-admin': Shield,
   'verificacion-acceso': Shield,
   'gestion-pantallas-rol': Shield,
+  'menu-movimientos': Database,
 };
 
 const DynamicNavigation = () => {
@@ -130,6 +131,7 @@ const DynamicNavigation = () => {
     { codigo: 'departamentos', nombre: 'Departamentos CRUD', ruta: '/departamentos' },
     { codigo: 'roles', nombre: 'Roles CRUD', ruta: '/roles' },
     { codigo: 'auditoria', nombre: 'Auditoría', ruta: '/auditoria' },
+    { codigo: 'menu-movimientos', nombre: 'Movimientos', ruta: '/menu-movimientos' },
   ];
 
   const displayScreens = navigationScreens.length > 0 ? navigationScreens : fallbackScreens;

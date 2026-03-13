@@ -34,6 +34,7 @@ import ProductosCRUD from "./pages/menu/productos";
 import LotesCRUD from "./pages/menu/lotes";
 import ProveedoresCRUD from "./pages/menu/proveedores";
 import TiposMovimientosCRUD from "./pages/menu/tiposmovimientos";
+import Movimientos from "./pages/menu/movimientos";
 
 const queryClient = new QueryClient();
 
@@ -91,7 +92,7 @@ const App = () => (
             <Route path="menu-clientes" element={<RBACRoute requireAdmin><Clientes /></RBACRoute>} />
             <Route path="menu-departamentos" element={<RBACRoute requireAdmin><Departamentos /></RBACRoute>} />
             <Route path="menu-roles" element={<RBACRoute requireAdmin><Roles /></RBACRoute>} />
-            
+            <Route path="menu-movimientos" element={<RBACRoute requireAdmin><Movimientos /></RBACRoute>} />
           
           </Route>
           
