@@ -579,7 +579,6 @@ const ProductosCRUD = () => {
     nombre_producto: '',
     sku_producto: '',
     descripcion_producto: '',
-    stock_actual_producto: 0,
     stock_minimo_producto: 0,
     stock_maximo_producto: '',
     ubicacion_producto: '',
@@ -799,7 +798,6 @@ const ProductosCRUD = () => {
     nombre_producto: formData.nombre_producto,
     sku_producto: formData.sku_producto,
     descripcion_producto: formData.descripcion_producto || null,
-    stock_actual_producto: parseInt(formData.stock_actual_producto) || 0,
     stock_minimo_producto: parseInt(formData.stock_minimo_producto) || 0,
     stock_maximo_producto: formData.stock_maximo_producto ? parseInt(formData.stock_maximo_producto) : null,
     ubicacion_producto: formData.ubicacion_producto || null,
@@ -817,7 +815,6 @@ const ProductosCRUD = () => {
     if (!formData.sku_producto?.trim()) errors.sku_producto = 'SKU requerido';
     if (!formData.id_categoria) errors.id_categoria = 'Categoría requerida';
     if (!formData.id_unidad_medida) errors.id_unidad_medida = 'Unidad requerida';
-    if (formData.stock_actual_producto < 0) errors.stock_actual_producto = 'Stock no puede ser negativo';
     
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -868,7 +865,6 @@ const ProductosCRUD = () => {
       nombre_producto: '',
       sku_producto: '',
       descripcion_producto: '',
-      stock_actual_producto: 0,
       stock_minimo_producto: 0,
       stock_maximo_producto: '',
       ubicacion_producto: '',
@@ -888,7 +884,6 @@ const ProductosCRUD = () => {
       nombre_producto: '',
       sku_producto: '',
       descripcion_producto: '',
-      stock_actual_producto: 0,
       stock_minimo_producto: 0,
       stock_maximo_producto: '',
       ubicacion_producto: '',
@@ -1252,7 +1247,6 @@ const ProductosCRUD = () => {
                         nombre_producto: producto.nombre_producto,
                         sku_producto: producto.sku_producto,
                         descripcion_producto: producto.descripcion_producto || '',
-                        stock_actual_producto: producto.stock_actual_producto,
                         stock_minimo_producto: producto.stock_minimo_producto,
                         stock_maximo_producto: producto.stock_maximo_producto || '',
                         ubicacion_producto: producto.ubicacion_producto || '',
@@ -1429,22 +1423,6 @@ const ProductosCRUD = () => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={4}>
-              <TextField
-                label="Stock Actual"
-                name="stock_actual_producto"
-                type="number"
-                value={formData.stock_actual_producto}
-                onChange={handleNumberChange}
-                fullWidth
-                error={!!formErrors.stock_actual_producto}
-                helperText={formErrors.stock_actual_producto}
-                disabled={loadingAction}
-                size="small"
-                InputProps={{ inputProps: { min: 0 } }}
-              />
-            </Grid>
-            
             <Grid item xs={12} sm={4}>
               <TextField
                 label="Stock Mínimo"

@@ -233,9 +233,24 @@ const MovimientosCRUD = () => {
 
   // Estado para validación
   const [formErrors, setFormErrors] = useState({});
-  
+
   // Estado para stock disponible del lote seleccionado
   const [stockDisponible, setStockDisponible] = useState(null);
+
+  // Función para decodificar el token y obtener el ID del usuario
+  const getCurrentUserId = () => {
+    try {
+      const token = localStorage.getItem('authToken') || localStorage.getItem('accessToken');
+      if (!token) return null;
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+      const payload = JSON.parse(atob(parts[1]));
+      return payload.user_id || payload.id || payload.sub || payload.userId;
+    } catch (error) {
+      console.error('Error al decodificar token:', error);
+      return null;
+    }
+  };
 
   // Función simplificada para obtener headers con token
   const getHeaders = () => {
@@ -273,7 +288,7 @@ const MovimientosCRUD = () => {
     const stockBase = lote.cantidad_recibida_lote || 0;
     
     // Calcular todas las salidas de este lote
-    const salidas = movimientos
+    let salidas = movimientos
       .filter(m => 
         m.id_lote === parseInt(loteId) && 
         TIPOS_SALIDA.includes(m.id_tipo_movimiento)
@@ -607,7 +622,7 @@ const MovimientosCRUD = () => {
     return true;
   }, [formData.id_tipo_movimiento, formData.id_lote, formData.cantidad_movimiento, calcularStockDisponible]);
 
-  // Crear nuevo movimiento - SIN ENVIAR usuario_id
+  // Crear nuevo movimiento
   const createMovimiento = async () => {
     if (!validateForm()) return;
     if (!validateStock()) return;
@@ -617,8 +632,13 @@ const MovimientosCRUD = () => {
       console.log('=== INICIO CREAR MOVIMIENTO ===');
       
       // El backend obtendrá el usuario del token automáticamente
+      const currentUserId = getCurrentUserId();
+      if (!currentUserId) {
+        showSnackbar('No se pudo identificar al usuario actual', 'error');
+        return;
+      }
+
       const movimientoData = {
-        tipo_movimiento: formData.tipo_movimiento,
         cantidad_movimiento: parseInt(formData.cantidad_movimiento) || 0,
         precio_unitario_movimiento: parseFloat(formData.precio_unitario_movimiento) || 0,
         fecha_movimiento: formData.fecha_movimiento || new Date().toISOString(),
@@ -627,8 +647,8 @@ const MovimientosCRUD = () => {
         observaciones_movimiento: formData.observaciones_movimiento?.trim() || null,
         id_producto: parseInt(formData.id_producto),
         id_lote: formData.id_lote ? parseInt(formData.id_lote) : null,
-        id_tipo_movimiento: parseInt(formData.id_tipo_movimiento)
-        // NO enviamos usuario_id - el backend lo obtendrá del token
+        id_tipo_movimiento: parseInt(formData.id_tipo_movimiento),
+        usuario_id: currentUserId
       };
 
       console.log('Enviando datos al backend:', movimientoData);
@@ -667,7 +687,7 @@ const MovimientosCRUD = () => {
     }
   };
 
-  // Actualizar movimiento - SIN ENVIAR usuario_id
+  // Actualizar movimiento
   const updateMovimiento = async () => {
     if (!validateForm()) return;
     if (!validateStock()) return;
@@ -677,8 +697,13 @@ const MovimientosCRUD = () => {
       console.log('=== INICIO ACTUALIZAR MOVIMIENTO ===');
       
       // El backend obtendrá el usuario del token automáticamente
+      const currentUserId = getCurrentUserId();
+      if (!currentUserId) {
+        showSnackbar('No se pudo identificar al usuario actual', 'error');
+        return;
+      }
+
       const movimientoData = {
-        tipo_movimiento: formData.tipo_movimiento,
         cantidad_movimiento: parseInt(formData.cantidad_movimiento) || 0,
         precio_unitario_movimiento: parseFloat(formData.precio_unitario_movimiento) || 0,
         fecha_movimiento: formData.fecha_movimiento,
@@ -687,8 +712,8 @@ const MovimientosCRUD = () => {
         observaciones_movimiento: formData.observaciones_movimiento?.trim() || null,
         id_producto: parseInt(formData.id_producto),
         id_lote: formData.id_lote ? parseInt(formData.id_lote) : null,
-        id_tipo_movimiento: parseInt(formData.id_tipo_movimiento)
-        // NO enviamos usuario_id - el backend lo obtendrá del token
+        id_tipo_movimiento: parseInt(formData.id_tipo_movimiento),
+        usuario_id: currentUserId
       };
 
       console.log('Actualizando movimiento:', movimientoData);
@@ -722,7 +747,6 @@ const MovimientosCRUD = () => {
       console.error('Error en updateMovimiento:', error);
       showSnackbar(error.message || 'Error al actualizar el movimiento', 'error');
     } finally {
-      setLoadingAction(false);
       console.log('=== FIN ACTUALIZAR MOVIMIENTO ===');
     }
   };
